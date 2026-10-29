@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/auth'
 import mahasiswa from './routes/mahasiswa'
 import perwalian from './routes/perwalian'
 import perkuliahan from './routes/perkuliahan'
+import master from './routes/master'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -23,6 +24,7 @@ const routes: RouteRecordRaw[] = [
   ...mahasiswa,
   ...perwalian,
   ...perkuliahan,
+  ...master,
   { path: '/design-system', component: v('DesignSystemView'), meta: { title: 'Design system', public: true } },
   { path: '/:pathMatch(.*)*', component: v('NotFoundView'), meta: { title: 'Tidak ditemukan', public: true } },
 ]
