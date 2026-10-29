@@ -166,7 +166,8 @@ CRUD = `GET list`, `GET /:id`, `POST`, `PUT /:id`, `DELETE /:id`
 - `GET /kurikulum?prodi_id=` → `Kurikulum[]`
 - `GET /kurikulum/:id/mata-kuliah` → `MataKuliah[]`
 - `POST /mata-kuliah`, `PUT /mata-kuliah/:id` (body includes `prasyarat: {mk_id, nilai_min}[]`)
-- `GET /ekuivalensi?kurikulum_id=`, `POST /ekuivalensi` `{ mk_lama_id, mk_baru_id }`
+- `GET /ekuivalensi?kurikulum_id=` → `{ id, mk_lama_id, mk_lama_kode, mk_lama_nama, mk_baru_id, mk_baru_kode, mk_baru_nama }[]` (rows whose `mk_baru` belongs to that kurikulum); `POST /ekuivalensi` `{ mk_lama_id, mk_baru_id }`
+- `POST /kelas` body: `{ periode_id, mk_id, nama, dosen_id|null, ruang_id|null, slot: Slot, kuota }` (extra fields like `prodi_id` are ignored)
 
 ### Kelas & jadwal (operator, kaprodi) (FR-14, FR-15, EC-12, EC-13)
 - `GET /kelas?periode_id=&prodi_id=&q=` → `Kelas[]`
