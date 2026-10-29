@@ -80,7 +80,7 @@ function onKey(e: KeyboardEvent) {
               <input
                 ref="input"
                 v-model="q"
-                class="h-14 flex-1 bg-transparent text-md outline-none placeholder:text-ink-3"
+                class="h-14 flex-1 bg-transparent text-md outline-none placeholder:text-ink-3 focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder="Cari halaman atau perintah…"
                 aria-label="Cari perintah"
                 @keydown="onKey"

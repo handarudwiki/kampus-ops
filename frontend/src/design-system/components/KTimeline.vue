@@ -24,7 +24,7 @@ const state = (i: number, p: { end: string }) => (i === idx.value ? 'now' : day(
         <span
           :class="[
             'size-2 rounded-pill',
-            state(i, p) === 'now' ? 'animate-pulse bg-green' : state(i, p) === 'done' ? 'bg-ink-3' : 'bg-line-strong',
+            state(i, p) === 'now' ? 'ko-live animate-pulse bg-green' : state(i, p) === 'done' ? 'bg-ink-3' : 'bg-line-strong',
           ]"
         />
         <span :class="['text-xs font-semibold uppercase tracking-[0.06em]', state(i, p) === 'now' ? 'opacity-70' : 'text-ink-3']">

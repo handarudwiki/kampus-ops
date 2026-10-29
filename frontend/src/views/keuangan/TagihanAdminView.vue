@@ -27,7 +27,10 @@ onMounted(async () => {
   load()
   prodi.value = (await api.list<Prodi>('/prodi', { per_page: 100 }).catch(() => ({ data: [] }))).data
 })
-watch([status, prodiId, q], load)
+watch([status, prodiId, q], () => { page.value = 1; load() })
+const page = ref(1)
+const PER = 20
+const paged = computed(() => rows.value.slice((page.value - 1) * PER, page.value * PER))
 
 const sum = computed(() => {
   const s = { total: 0, paid: 0, lunas: 0, sebagian: 0, belum: 0 }
@@ -97,7 +100,7 @@ const menu = (t: Tagihan) => [
           { key: 'status', label: 'Status' },
           { key: 'menu', label: '', align: 'right', width: '56px' },
         ]"
-        :rows="rows"
+        :rows="paged"
         :loading="loading"
       >
         <template #cell-mhs="{ row }"><p class="font-semibold">{{ row.nama }}</p><p class="text-sm text-ink-3"><span class="font-mono">{{ row.nim }}</span> · {{ row.prodi_nama }}</p></template>
@@ -107,6 +110,7 @@ const menu = (t: Tagihan) => [
         <template #cell-status="{ row }"><KStatus domain="tagihan" :value="row.status" variant="dot" /></template>
         <template #cell-menu="{ row }"><KMenu :items="menu(row)"><KIconButton label="Aksi"><MoreHorizontal class="size-4" /></KIconButton></KMenu></template>
       </KTable>
+      <KPagination v-if="rows.length > PER" v-model="page" :total="rows.length" :per-page="PER" />
     </KCard>
 
     <PayModal v-model="payOpen" :tagihan="paying" @paid="load" />

@@ -25,6 +25,6 @@ export async function apiGet<T>(page: Page, token: string, role: string, path: s
 /** Wait for skeletons/spinners to settle so screenshots show real data. */
 export async function settle(page: Page) {
   await page.waitForLoadState('networkidle')
-  await page.waitForFunction(() => !document.querySelector('[aria-busy="true"], .animate-pulse, .animate-spin'), null, { timeout: 15_000 }).catch(() => {})
+  await page.waitForFunction(() => !document.querySelector('[aria-busy="true"], .animate-pulse:not(.ko-live), .animate-spin'), null, { timeout: 15_000 }).catch(() => {})
   await page.waitForTimeout(400)
 }

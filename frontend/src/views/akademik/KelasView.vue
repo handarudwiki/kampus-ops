@@ -31,7 +31,10 @@ onMounted(async () => {
   ]).catch(() => [{ data: [] }, { data: [] }, { data: [] }] as never)
   prodi.value = p.data; dosen.value = d.data; ruang.value = r.data
 })
-watch([prodiId, q], load)
+watch([prodiId, q], () => { page.value = 1; load() })
+const page = ref(1)
+const PER = 20
+const paged = computed(() => rows.value.slice((page.value - 1) * PER, page.value * PER))
 
 // Form
 type Form = { id?: string; prodi_id: string; mk_id: string; nama: string; dosen_id: string; ruang_id: string; slot: Slot; kuota: number }
@@ -112,7 +115,7 @@ const ruangOpts = computed(() => ruang.value.map((r) => ({ value: r.id, label: `
           { key: 'status', label: 'Status', hideMobile: true },
           { key: 'menu', label: '', align: 'right', width: '56px' },
         ]"
-        :rows="rows"
+        :rows="paged"
         :loading="loading"
         clickable
         @row-click="(k) => router.push(`/kelas/${k.id}`)"
@@ -126,6 +129,7 @@ const ruangOpts = computed(() => ruang.value.map((r) => ({ value: r.id, label: `
         <template #cell-status="{ row }"><KStatus domain="kelas" :value="row.status" variant="dot" /></template>
         <template #cell-menu="{ row }"><div @click.stop><KMenu :items="menu(row)"><KIconButton label="Aksi"><MoreHorizontal class="size-4" /></KIconButton></KMenu></div></template>
       </KTable>
+      <KPagination v-if="rows.length > PER" v-model="page" :total="rows.length" :per-page="PER" />
     </KCard>
 
     <KModal v-model="open" :title="form.id ? 'Ubah kelas' : 'Tambah kelas'" size="lg">

@@ -12,7 +12,10 @@ const auth = useAuthStore()
 const q = ref('')
 const entitas = ref('')
 const { data, loading, reload } = useAsync<AuditEntry[]>(() => api.get<AuditEntry[]>('/audit-log', { q: q.value, entitas: entitas.value }), [])
-watch([q, entitas], reload)
+watch([q, entitas], () => { page.value = 1; reload() })
+const page = ref(1)
+const PER = 20
+const paged = computed(() => data.value.slice((page.value - 1) * PER, page.value * PER))
 const ENTITAS = ['krs', 'nilai', 'koreksi_nilai', 'kelas', 'mahasiswa', 'tagihan', 'pembayaran', 'dispensasi', 'periode', 'pendaftar_pmb'].map((v) => ({ value: v, label: v }))
 
 const open = ref(false)
@@ -43,7 +46,7 @@ const aksiTone = (a: string) => (a.includes('delete') || a.includes('reject') ||
       </KToolbar>
       <KTable
         :columns="[{ key: 'created_at', label: 'Waktu', width: '170px' }, { key: 'actor', label: 'Aktor' }, { key: 'aksi', label: 'Aksi' }, { key: 'entitas', label: 'Entitas', hideMobile: true }, { key: 'request_id', label: 'Request', hideMobile: true }]"
-        :rows="data"
+        :rows="paged"
         :loading="loading"
         clickable
         empty-title="Belum ada aktivitas"
@@ -55,6 +58,7 @@ const aksiTone = (a: string) => (a.includes('delete') || a.includes('reject') ||
         <template #cell-entitas="{ row }"><span class="font-mono text-sm">{{ row.entitas }}</span><span class="font-mono text-xs text-ink-3"> #{{ row.entitas_id.slice(0, 8) }}</span></template>
         <template #cell-request_id="{ value }"><span class="font-mono text-xs text-ink-3">{{ value?.slice(0, 12) }}</span></template>
       </KTable>
+      <KPagination v-if="data.length > PER" v-model="page" :total="data.length" :per-page="PER" />
     </KCard>
 
     <KModal v-model="open" :title="sel ? `${sel.aksi} · ${sel.entitas}` : ''" :description="sel ? `${sel.actor_nama} · ${dateTime(sel.created_at, auth.tenant?.timezone)} · request ${sel.request_id}` : ''" size="lg">

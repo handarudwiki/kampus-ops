@@ -18,7 +18,19 @@ test('00 · public pages', async ({ page }) => {
 })
 
 test('10 · mahasiswa', async ({ page }) => {
-  await loginAs(page, '2024110001', 'mahasiswa')
+  const token = await loginAs(page, '2024110001', 'mahasiswa')
+  // Build a realistic draft KRS: take eligible classes until ~15 SKS
+  const offers = await apiGet<{ id: string; sks: number; eligible: boolean; in_krs: boolean; mk_kode: string }[]>(page, token, 'mahasiswa', '/krs/me/offerings')
+  let sks = 0
+  const taken = new Set<string>()
+  for (const o of offers) {
+    if (!o.eligible || o.in_krs || taken.has(o.mk_kode) || sks >= 15) continue
+    const r = await page.request.post('/api/v1/krs/me/items', {
+      data: { kelas_id: o.id },
+      headers: { Authorization: `Bearer ${token}`, 'X-Active-Role': 'mahasiswa', 'Idempotency-Key': crypto.randomUUID() },
+    })
+    if (r.ok()) { sks += o.sks; taken.add(o.mk_kode) }
+  }
   await shot(page, '10-mahasiswa-dashboard', '/')
   await shot(page, '11-mahasiswa-krs', '/krs')
   await shot(page, '12-mahasiswa-jadwal', '/jadwal')
@@ -45,10 +57,17 @@ test('20 · dosen wali', async ({ page }) => {
 test('30 · dosen pengampu', async ({ page }) => {
   const token = await loginAs(page, '0011223344', 'dosen')
   await shot(page, '30-dosen-mengajar', '/mengajar')
-  const kelas = await apiGet<{ id: string }[]>(page, token, 'dosen', '/teaching/kelas')
-  if (kelas[0]) {
-    await shot(page, '31-dosen-presensi', `/kelas/${kelas[0].id}`)
-    await shot(page, '32-dosen-nilai', `/kelas/${kelas[0].id}/nilai`)
+  const kelas = await apiGet<{ id: string; terisi: number }[]>(page, token, 'dosen', '/teaching/kelas')
+  const busiest = [...kelas].sort((a, b) => b.terisi - a.terisi)[0]
+  if (busiest) {
+    await shot(page, '31-dosen-presensi', `/kelas/${busiest.id}`)
+    await page.goto(`/kelas/${busiest.id}/nilai`)
+    await settle(page)
+    // Fill a few grades so the weighted preview is visible
+    const inputs = page.locator('input[type=number]')
+    const n = Math.min(await inputs.count(), 18)
+    for (let i = 0; i < n; i++) await inputs.nth(i).fill(String(70 + ((i * 7) % 28)))
+    await shot(page, '32-dosen-nilai')
   }
   await shot(page, '33-dosen-koreksi', '/koreksi-nilai')
 })

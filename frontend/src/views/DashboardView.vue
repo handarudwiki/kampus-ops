@@ -5,7 +5,7 @@ import { api } from '@/api/client'
 import type { Dashboard, Role } from '@/api/types'
 import { useAsync } from '@/composables/useAsync'
 import { ROLE_LABEL } from '@/config/roles'
-import { date, toneClass } from '@/design-system'
+import { date, dateTime, lookupStatus, toneClass } from '@/design-system'
 import { usePeriodeStore } from '@/stores/periode'
 import { useAuthStore } from '@/stores/auth'
 
@@ -32,6 +32,8 @@ const QUICK: Partial<Record<Role, { label: string; to: string }[]>> = {
 }
 const quick = computed(() => (auth.activeRole ? QUICK[auth.activeRole] ?? [] : []))
 const firstName = computed(() => auth.user?.name.split(' ')[0] ?? '')
+/** Backend messages may embed RFC3339 timestamps; show them in the campus timezone. */
+const humanize = (msg: string) => msg.replace(/\d{4}-\d{2}-\d{2}T[\d:.]+(Z|[+-]\d{2}:\d{2})/g, (iso) => dateTime(iso, auth.tenant?.timezone))
 const alertIcon = { info: Info, warning: AlertTriangle, error: XCircle }
 const alertTone = { info: 'blue', warning: 'amber', error: 'red' } as const
 const statCols = computed(() => {
@@ -84,7 +86,7 @@ const statCols = computed(() => {
               :class="['group flex items-start gap-3 rounded-control p-3.5', toneClass[alertTone[a.level]].tint]"
             >
               <component :is="alertIcon[a.level]" :class="['mt-0.5 size-4 shrink-0', toneClass[alertTone[a.level]].text]" />
-              <p class="flex-1 text-sm font-semibold text-ink">{{ a.message }}</p>
+              <p class="flex-1 text-sm font-semibold text-ink">{{ humanize(a.message) }}</p>
               <ArrowUpRight v-if="a.link" class="size-4 shrink-0 text-ink-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </component>
           </li>
@@ -93,7 +95,13 @@ const statCols = computed(() => {
 
       <!-- Table -->
       <KCard v-if="data.table" :title="data.table.title" :to="data.table.link ?? undefined" flush class="xl:col-span-3">
-        <KTable :columns="data.table.columns" :rows="data.table.rows" :row-key="(r) => JSON.stringify(r)" />
+        <KTable :columns="data.table.columns" :rows="data.table.rows" :row-key="(r) => JSON.stringify(r)">
+          <template v-for="c in data.table.columns" :key="c.key" #[`cell-${c.key}`]="{ value }">
+            <KBadge v-if="lookupStatus(c.key, value)" :tone="lookupStatus(c.key, value)!.tone" :variant="c.key === 'status' ? 'dot' : 'pill'">{{ lookupStatus(c.key, value)!.label }}</KBadge>
+            <span v-else-if="/^\d{8,}$/.test(String(value))" class="font-mono text-sm">{{ value }}</span>
+            <span v-else>{{ value }}</span>
+          </template>
+        </KTable>
       </KCard>
     </div>
   </div>

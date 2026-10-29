@@ -83,6 +83,26 @@ export function statusOf(domain: StatusDomain, value: string | null | undefined)
   return (STATUS[domain] as Record<string, StatusDef>)[value] ?? S(value, 'gray')
 }
 
+/**
+ * Find the status definition for a raw enum value coming from a generic payload
+ * (e.g. dashboard tables). The column key narrows the search; falls back to any domain.
+ */
+const HINTS: Record<string, StatusDomain[]> = {
+  status: ['krs', 'tagihan', 'mahasiswa', 'pmb', 'approval', 'kelas', 'periode'],
+  jenis: ['jenisTagihan', 'jenisDispensasi'],
+  tingkat: ['level'],
+  level: ['level'],
+}
+export function lookupStatus(column: string, value: unknown): StatusDef | null {
+  if (typeof value !== 'string') return null
+  const order = [...(HINTS[column] ?? []), ...(Object.keys(STATUS) as StatusDomain[])]
+  for (const d of order) {
+    const hit = (STATUS[d] as Record<string, StatusDef>)[value]
+    if (hit && (HINTS[column] || value.includes('_') || d === 'level')) return hit
+  }
+  return null
+}
+
 /** Options for <KSelect> filters built from the same map. */
 export function statusOptions(domain: StatusDomain) {
   return Object.entries(STATUS[domain]).map(([value, d]) => ({ value, label: d.label }))

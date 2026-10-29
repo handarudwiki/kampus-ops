@@ -32,6 +32,10 @@ async function validate() {
   await run(async () => { result.value = await api.post<ValidationResult>('/pddikti/validate', { periode_id: periodeId.value }) }, 'Validasi selesai')
 }
 
+const page = ref(1)
+const PER = 15
+watch([level, rule], () => (page.value = 1))
+const paged = computed(() => items.value.slice((page.value - 1) * PER, page.value * PER))
 const items = computed(() => (result.value?.items ?? []).filter((i) => (!level.value || i.level === level.value) && (!rule.value || i.rule === rule.value)))
 const scoreTone = computed(() => { const s = result.value?.score ?? 0; return s >= 90 ? 'green' : s >= 70 ? 'amber' : 'red' })
 const blocked = computed(() => !result.value || result.value.errors > 0)
@@ -110,7 +114,7 @@ async function download(entity: string) {
         </KToolbar>
         <KTable
           :columns="[{ key: 'rule', label: 'Aturan', width: '90px' }, { key: 'level', label: 'Tingkat', hideMobile: true }, { key: 'entity_label', label: 'Record' }, { key: 'message', label: 'Masalah', hideMobile: true }, { key: 'fix', label: '', align: 'right' }]"
-          :rows="items"
+          :rows="paged"
           empty-title="Tidak ada temuan"
           empty-description="Data periode ini siap dilaporkan."
         >
@@ -120,6 +124,7 @@ async function download(entity: string) {
           <template #cell-message="{ value }"><span class="text-sm text-ink-2">{{ value }}</span></template>
           <template #cell-fix="{ row }"><KButton size="sm" variant="soft" :to="row.fix_url">Perbaiki <ArrowUpRight class="size-4" /></KButton></template>
         </KTable>
+        <KPagination v-if="items.length > PER" v-model="page" :total="items.length" :per-page="PER" />
       </KCard>
     </template>
   </div>
