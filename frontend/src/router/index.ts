@@ -3,6 +3,7 @@ import type { Role } from '@/api/types'
 import { useAuthStore } from '@/stores/auth'
 import mahasiswa from './routes/mahasiswa'
 import perwalian from './routes/perwalian'
+import perkuliahan from './routes/perkuliahan'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -21,6 +22,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/', component: v('DashboardView'), meta: { title: 'Beranda' } },
   ...mahasiswa,
   ...perwalian,
+  ...perkuliahan,
   { path: '/design-system', component: v('DesignSystemView'), meta: { title: 'Design system', public: true } },
   { path: '/:pathMatch(.*)*', component: v('NotFoundView'), meta: { title: 'Tidak ditemukan', public: true } },
 ]
