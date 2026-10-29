@@ -11,7 +11,10 @@ export const useUiStore = defineStore('ui', () => {
     const root = document.documentElement
     if (t === 'system') delete root.dataset.theme
     else root.dataset.theme = t
-    try { t === 'system' ? localStorage.removeItem('ko-theme') : localStorage.setItem('ko-theme', t) } catch { /* ignore */ }
+    try {
+      if (t === 'system') localStorage.removeItem('ko-theme')
+      else localStorage.setItem('ko-theme', t)
+    } catch { /* ignore */ }
   }, { immediate: true })
 
   return { theme, navOpen }

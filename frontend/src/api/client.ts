@@ -30,7 +30,10 @@ function read(k: string) {
   try { return localStorage.getItem(k) } catch { return null }
 }
 function write(k: string, v: string | null) {
-  try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v) } catch { /* private mode */ }
+  try {
+    if (v == null) localStorage.removeItem(k)
+    else localStorage.setItem(k, v)
+  } catch { /* private mode */ }
 }
 
 let onUnauthorized: () => void = () => {}
