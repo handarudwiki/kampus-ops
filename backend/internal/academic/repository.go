@@ -229,13 +229,14 @@ func Riwayat(ctx context.Context, q db.Querier, mhsID string) ([]RiwayatStatus, 
 // GradeRecord is a final grade with its KRS context.
 type GradeRecord struct {
 	domain.GradeEntry
-	PeriodeID string
-	KelasID   string
+	PeriodeID   string
+	PeriodeTipe string
+	KelasID     string
 }
 
 // GradeHistory returns all FINAL grades of a student (ordered by period).
 func GradeHistory(ctx context.Context, q db.Querier, mhsID string) ([]GradeRecord, error) {
-	rows, err := q.Query(ctx, `SELECT mk.id, mk.kode, mk.nama, k.sks, n.bobot_x100, n.huruf, p.kode, mk.semester, p.id, k.id
+	rows, err := q.Query(ctx, `SELECT mk.id, mk.kode, mk.nama, k.sks, n.bobot_x100, n.huruf, p.kode, mk.semester, p.id, p.tipe, k.id
 		FROM nilai n JOIN kelas k ON k.id = n.kelas_id JOIN mata_kuliah mk ON mk.id = k.mk_id JOIN periode p ON p.id = k.periode_id
 		WHERE n.tenant_id=$1 AND n.mahasiswa_id=$2 AND n.final_at IS NOT NULL AND n.bobot_x100 IS NOT NULL
 		ORDER BY p.kode, mk.kode`, appctx.TenantID(ctx), mhsID)
@@ -246,7 +247,7 @@ func GradeHistory(ctx context.Context, q db.Querier, mhsID string) ([]GradeRecor
 	var out []GradeRecord
 	for rows.Next() {
 		var g GradeRecord
-		if err := rows.Scan(&g.MkID, &g.MkKode, &g.MkNama, &g.Sks, &g.BobotX100, &g.Huruf, &g.PeriodeKode, &g.Semester, &g.PeriodeID, &g.KelasID); err != nil {
+		if err := rows.Scan(&g.MkID, &g.MkKode, &g.MkNama, &g.Sks, &g.BobotX100, &g.Huruf, &g.PeriodeKode, &g.Semester, &g.PeriodeID, &g.PeriodeTipe, &g.KelasID); err != nil {
 			return nil, err
 		}
 		out = append(out, g)
