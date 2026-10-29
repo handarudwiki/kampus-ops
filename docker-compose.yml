@@ -1,0 +1,65 @@
+# KampusOps — local stack: `docker compose up --build`
+# Seed demo data once: `docker compose --profile seed run --rm seed`
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: kampus
+      POSTGRES_PASSWORD: kampus
+      POSTGRES_DB: kampusops
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kampus -d kampusops"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./backend
+    command: ["api"]   # applies migrations, then serves on :8080
+    environment: &backend-env
+      PORT: "8080"
+      DATABASE_URL: postgres://kampus:kampus@postgres:5432/kampusops?sslmode=disable
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-me}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:-dev-webhook-secret}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      MIGRATE_ON_START: "true"
+      LOG_LEVEL: info
+    ports: ["8080:8080"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  worker:
+    build: ./backend
+    command: ["worker"]
+    environment: *backend-env
+    depends_on:
+      api: { condition: service_healthy }
+
+  seed:
+    build: ./backend
+    command: ["seed"]   # truncates tenant data and loads the demo dataset
+    environment: *backend-env
+    profiles: ["seed"]
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  frontend:
+    build: ./frontend   # nginx on :80, proxies /api to http://api:8080
+    ports: ["5173:80"]
+    depends_on: [api]
+
+volumes:
+  pgdata:

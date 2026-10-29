@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/kampusops/backend/internal/platform/config"
 	"github.com/kampusops/backend/internal/platform/db"
