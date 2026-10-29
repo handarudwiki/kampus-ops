@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import type { Role } from '@/api/types'
 import { useAuthStore } from '@/stores/auth'
+import mahasiswa from './routes/mahasiswa'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -17,6 +18,7 @@ const v = (name: string) => () => import(`../views/${name}.vue`)
 const routes: RouteRecordRaw[] = [
   { path: '/login', component: v('auth/LoginView'), meta: { public: true, bare: true, title: 'Masuk' } },
   { path: '/', component: v('DashboardView'), meta: { title: 'Beranda' } },
+  ...mahasiswa,
   { path: '/design-system', component: v('DesignSystemView'), meta: { title: 'Design system', public: true } },
   { path: '/:pathMatch(.*)*', component: v('NotFoundView'), meta: { title: 'Tidak ditemukan', public: true } },
 ]
