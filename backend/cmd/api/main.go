@@ -40,6 +40,9 @@ func main() {
 	rc, err := redis.Connect(ctx, cfg.RedisURL)
 	if err != nil {
 		log.Warn("redis unavailable, using in-memory idempotency store (single instance only)", "err", err)
+		if rc != nil {
+			_ = rc.Close()
+		}
 		kv = redis.NewMemoryKV()
 	} else {
 		kv = redis.NewKV(rc)
