@@ -1,0 +1,101 @@
+/*
+ * KampusOps design tokens.
+ * Every color, radius, shadow and motion value in the app comes from here.
+ * Components reference tokens through Tailwind (see tailwind.config.js) — never raw hex.
+ * Colors are stored as RGB channels so Tailwind opacity modifiers work (bg-accent/10).
+ */
+:root {
+  /* Surfaces */
+  --ko-canvas: 238 240 243;      /* app background behind cards */
+  --ko-surface: 255 255 255;     /* cards, sidebar, modals */
+  --ko-surface-2: 246 247 249;   /* inset areas, table header, inputs */
+  --ko-surface-3: 236 238 242;   /* hover on surface-2, segmented track */
+  --ko-line: 230 232 236;        /* borders & dividers */
+  --ko-line-strong: 210 214 220;
+
+  /* Text */
+  --ko-ink: 17 19 24;            /* primary text, primary button */
+  --ko-ink-2: 75 82 94;          /* secondary text */
+  --ko-ink-3: 137 144 156;       /* muted: captions, placeholders, number tails */
+  --ko-on-ink: 255 255 255;      /* text on primary button */
+
+  /* Brand accent (links, focus, active nav, charts series 1) */
+  --ko-accent: 59 123 246;
+  --ko-accent-soft: 234 241 255;
+
+  /* Semantic tones. Each has a solid (dots, icons, chart) and a soft (tinted background) */
+  --ko-blue: 59 123 246;    --ko-blue-soft: 234 241 255;   --ko-blue-ink: 30 80 190;
+  --ko-green: 34 176 125;   --ko-green-soft: 229 247 239;  --ko-green-ink: 18 120 84;
+  --ko-amber: 245 184 61;   --ko-amber-soft: 254 245 225;  --ko-amber-ink: 150 98 6;
+  --ko-red: 236 84 84;      --ko-red-soft: 253 236 236;    --ko-red-ink: 180 40 40;
+  --ko-violet: 133 92 248;  --ko-violet-soft: 241 236 255; --ko-violet-ink: 96 56 210;
+  --ko-pink: 232 90 170;    --ko-pink-soft: 253 236 246;   --ko-pink-ink: 170 40 120;
+  --ko-gray: 137 144 156;   --ko-gray-soft: 241 242 245;   --ko-gray-ink: 75 82 94;
+
+  /* Shape */
+  --ko-radius-card: 20px;
+  --ko-radius-control: 12px;
+  --ko-radius-pill: 999px;
+
+  /* Elevation */
+  --ko-shadow-card: 0 1px 2px rgb(16 24 40 / 0.04);
+  --ko-shadow-pop: 0 12px 32px -8px rgb(16 24 40 / 0.18), 0 2px 6px rgb(16 24 40 / 0.06);
+
+  /* Motion */
+  --ko-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ko-dur: 160ms;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --ko-canvas: 12 13 16;
+    --ko-surface: 22 24 29;
+    --ko-surface-2: 30 33 39;
+    --ko-surface-3: 40 44 52;
+    --ko-line: 42 46 54;
+    --ko-line-strong: 60 66 76;
+    --ko-ink: 240 242 246;
+    --ko-ink-2: 178 185 197;
+    --ko-ink-3: 120 128 141;
+    --ko-on-ink: 17 19 24;
+    --ko-accent: 102 153 255;
+    --ko-accent-soft: 30 42 70;
+    --ko-blue: 102 153 255;   --ko-blue-soft: 28 40 66;   --ko-blue-ink: 150 186 255;
+    --ko-green: 52 199 145;   --ko-green-soft: 20 52 42;  --ko-green-ink: 110 222 178;
+    --ko-amber: 247 196 90;   --ko-amber-soft: 60 46 18;  --ko-amber-ink: 250 210 130;
+    --ko-red: 248 113 113;    --ko-red-soft: 66 28 30;    --ko-red-ink: 252 160 160;
+    --ko-violet: 160 128 255; --ko-violet-soft: 46 36 78; --ko-violet-ink: 196 176 255;
+    --ko-pink: 240 120 190;   --ko-pink-soft: 66 28 52;   --ko-pink-ink: 248 170 214;
+    --ko-gray: 120 128 141;   --ko-gray-soft: 36 40 47;   --ko-gray-ink: 178 185 197;
+    --ko-shadow-card: 0 0 0 1px rgb(255 255 255 / 0.02);
+    --ko-shadow-pop: 0 16px 40px -8px rgb(0 0 0 / 0.6);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --ko-canvas: 12 13 16;
+  --ko-surface: 22 24 29;
+  --ko-surface-2: 30 33 39;
+  --ko-surface-3: 40 44 52;
+  --ko-line: 42 46 54;
+  --ko-line-strong: 60 66 76;
+  --ko-ink: 240 242 246;
+  --ko-ink-2: 178 185 197;
+  --ko-ink-3: 120 128 141;
+  --ko-on-ink: 17 19 24;
+  --ko-accent: 102 153 255;
+  --ko-accent-soft: 30 42 70;
+  --ko-blue: 102 153 255;   --ko-blue-soft: 28 40 66;   --ko-blue-ink: 150 186 255;
+  --ko-green: 52 199 145;   --ko-green-soft: 20 52 42;  --ko-green-ink: 110 222 178;
+  --ko-amber: 247 196 90;   --ko-amber-soft: 60 46 18;  --ko-amber-ink: 250 210 130;
+  --ko-red: 248 113 113;    --ko-red-soft: 66 28 30;    --ko-red-ink: 252 160 160;
+  --ko-violet: 160 128 255; --ko-violet-soft: 46 36 78; --ko-violet-ink: 196 176 255;
+  --ko-pink: 240 120 190;   --ko-pink-soft: 66 28 52;   --ko-pink-ink: 248 170 214;
+  --ko-gray: 120 128 141;   --ko-gray-soft: 36 40 47;   --ko-gray-ink: 178 185 197;
+  --ko-shadow-card: 0 0 0 1px rgb(255 255 255 / 0.02);
+  --ko-shadow-pop: 0 16px 40px -8px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}

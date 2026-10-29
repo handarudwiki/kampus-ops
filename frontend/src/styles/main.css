@@ -1,0 +1,32 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    @apply bg-canvas font-sans text-base text-ink antialiased;
+  }
+  ::selection {
+    @apply bg-accent/20;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-surface;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* Eyebrow label used above table columns and section groups */
+  .ko-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.06em] text-ink-3;
+  }
+  .ko-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--ko-line-strong)) transparent;
+  }
+}
