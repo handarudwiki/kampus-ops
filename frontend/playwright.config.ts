@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test'
 
 /**
  * Two projects:
- *  - screenshots: regenerates docs/screenshots (npm run screenshots)
+ *  - screenshots: regenerates ./screenshots (npm run screenshots)
  *  - e2e: smoke flows (npm run e2e)
  * Expects the app at BASE_URL (default: Vite dev server proxying to the API).
  */

@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { apiGet, loginAs, settle } from './helpers'
 
-const OUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../docs/screenshots')
+const OUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../screenshots')
 
 async function shot(page: Page, name: string, url?: string, opts: { full?: boolean } = {}) {
   if (url) await page.goto(url)
