@@ -170,6 +170,7 @@ CRUD = `GET list`, `GET /:id`, `POST`, `PUT /:id`, `DELETE /:id`
 
 ### Kelas & jadwal (operator, kaprodi) (FR-14, FR-15, EC-12, EC-13)
 - `GET /kelas?periode_id=&prodi_id=&q=` → `Kelas[]`
+- `GET /kelas/:id` → `Kelas` (any staff/dosen role; used by class detail page and PDDikti fix links)
 - `POST /kelas`, `PUT /kelas/:id` → 409 `SCHEDULE_ROOM_CLASH|SCHEDULE_LECTURER_CLASH` with `details: { conflicts: Kelas[] }`
 - `POST /kelas/:id/cancel` `{ alasan }` → cancels related KRS items, notifies (EC-13)
 - `POST /kelas/:id/ganti-dosen` `{ dosen_id, efektif: date }` (EC-12)
