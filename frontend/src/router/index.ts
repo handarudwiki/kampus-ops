@@ -8,6 +8,7 @@ import master from './routes/master'
 import akademik from './routes/akademik'
 import keuangan from './routes/keuangan'
 import pmb from './routes/pmb'
+import pelaporan from './routes/pelaporan'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -31,6 +32,7 @@ const routes: RouteRecordRaw[] = [
   ...akademik,
   ...keuangan,
   ...pmb,
+  ...pelaporan,
   { path: '/design-system', component: v('DesignSystemView'), meta: { title: 'Design system', public: true } },
   { path: '/:pathMatch(.*)*', component: v('NotFoundView'), meta: { title: 'Tidak ditemukan', public: true } },
 ]
