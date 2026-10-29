@@ -218,8 +218,29 @@ func randomDigits(n int) string {
 	return b.String()
 }
 
+// ownOnly: students/applicants may only touch their own bills (others → 404).
+func (s *Service) ownOnly(ctx context.Context, id string) error {
+	p, _ := appctx.PrincipalFrom(ctx)
+	if p.ActiveRole != "mahasiswa" && p.ActiveRole != "calon_mahasiswa" {
+		return nil
+	}
+	mine, err := s.Mine(ctx)
+	if err != nil {
+		return err
+	}
+	for _, t := range mine {
+		if t.ID == id {
+			return nil
+		}
+	}
+	return httpx.NotFound("Tagihan tidak ditemukan")
+}
+
 // IssueVA assigns a fake virtual account number (tenant prefix + 12 random digits).
 func (s *Service) IssueVA(ctx context.Context, id string) (Tagihan, error) {
+	if err := s.ownOnly(ctx, id); err != nil {
+		return Tagihan{}, err
+	}
 	t, err := s.tenants.Current(ctx)
 	if err != nil {
 		return Tagihan{}, err
@@ -290,6 +311,9 @@ func (s *Service) Cicilan(ctx context.Context, id string, n int) (Tagihan, error
 }
 
 func (s *Service) Pembayaran(ctx context.Context, id string) ([]Pembayaran, error) {
+	if err := s.ownOnly(ctx, id); err != nil {
+		return nil, err
+	}
 	if _, err := s.getTagihan(ctx, s.pool, id); err != nil {
 		return nil, err
 	}
