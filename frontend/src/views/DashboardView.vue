@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent } from 'vue'
-import { AlertTriangle, ArrowUpRight, Info, XCircle } from 'lucide-vue-next'
+import { AlertTriangle, ArrowUpRight, CalendarDays, Info, Sparkles, XCircle } from 'lucide-vue-next'
 import { api } from '@/api/client'
 import type { Dashboard, Role } from '@/api/types'
 import { useAsync } from '@/composables/useAsync'
 import { ROLE_LABEL } from '@/config/roles'
-import { toneClass } from '@/design-system'
+import { date, toneClass } from '@/design-system'
+import { usePeriodeStore } from '@/stores/periode'
 import { useAuthStore } from '@/stores/auth'
 
 /**
@@ -13,6 +14,8 @@ import { useAuthStore } from '@/stores/auth'
  * so each role gets the same layout: KPI row → chart + alerts → table.
  */
 const auth = useAuthStore()
+const periode = usePeriodeStore()
+const today = date(new Date().toISOString(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 const PmbStatus = defineAsyncComponent(() => import('./pmb/PmbStatusView.vue'))
 
 const { data, loading } = useAsync<Dashboard | null>(() => api.get<Dashboard>('/dashboard'), null)
@@ -40,11 +43,17 @@ const statCols = computed(() => {
 <template>
   <PmbStatus v-if="auth.activeRole === 'calon_mahasiswa'" />
   <div v-else>
-    <KPageHeader :title="`Halo, ${firstName}`" :description="auth.activeRole ? `Ringkasan untuk ${ROLE_LABEL[auth.activeRole]}` : ''">
+    <KPageHeader :title="`Halo, ${firstName}`" :description="auth.activeRole ? `${today} · ${ROLE_LABEL[auth.activeRole]}` : today">
       <template #actions>
         <KButton v-for="(q, i) in quick" :key="q.to" :to="q.to" :variant="i === 0 ? 'primary' : 'secondary'">{{ q.label }}</KButton>
       </template>
     </KPageHeader>
+
+    <!-- Semester calendar: where are we in the cycle? -->
+    <KCard v-if="periode.phases.length && auth.activeRole !== 'super_admin'" class="mb-3" :title="`Kalender ${periode.label}`" :subtitle="periode.phase ? `Sedang berlangsung: ${periode.phase.label}` : 'Di luar tahapan akademik'">
+      <template #actions><span class="hidden items-center gap-1.5 text-sm text-ink-3 sm:inline-flex"><CalendarDays class="size-4" />{{ auth.tenant?.timezone }}</span></template>
+      <KTimeline :phases="periode.phases" :current="periode.phase?.key" />
+    </KCard>
 
     <!-- KPI row -->
     <div :class="['grid grid-cols-1 gap-3', statCols]">
@@ -62,7 +71,11 @@ const statCols = computed(() => {
       </KCard>
 
       <!-- Alerts, styled like the reference's tinted suggestion cards -->
-      <KCard v-if="data.alerts.length" title="Perlu perhatian" :class="!data.chart && 'xl:col-span-3'">
+      <KCard v-if="data.alerts.length" :class="!data.chart && 'xl:col-span-3'">
+        <div class="mb-4 flex items-center justify-between">
+          <span class="inline-flex items-center gap-1.5 rounded-pill bg-violet-soft px-2.5 py-1 text-xs font-bold text-violet-ink"><Sparkles class="size-3.5" />Perlu perhatian</span>
+          <span class="tabular text-sm font-semibold text-ink-3">{{ data.alerts.length }} item</span>
+        </div>
         <ul class="flex flex-col gap-2.5">
           <li v-for="(a, i) in data.alerts" :key="i">
             <component
@@ -71,7 +84,7 @@ const statCols = computed(() => {
               :class="['group flex items-start gap-3 rounded-control p-3.5', toneClass[alertTone[a.level]].tint]"
             >
               <component :is="alertIcon[a.level]" :class="['mt-0.5 size-4 shrink-0', toneClass[alertTone[a.level]].text]" />
-              <p class="flex-1 text-sm font-medium text-ink-2">{{ a.message }}</p>
+              <p class="flex-1 text-sm font-semibold text-ink">{{ a.message }}</p>
               <ArrowUpRight v-if="a.link" class="size-4 shrink-0 text-ink-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </component>
           </li>

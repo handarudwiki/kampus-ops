@@ -30,3 +30,22 @@
     scrollbar-color: rgb(var(--ko-line-strong)) transparent;
   }
 }
+
+/* Route change: quick fade + lift. Respects reduced motion. */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 160ms var(--ko-ease), transform 200ms var(--ko-ease);
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.page-leave-to {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-enter-active,
+  .page-leave-active {
+    transition: none;
+  }
+}

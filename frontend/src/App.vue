@@ -17,7 +17,9 @@ const bare = computed(() => route.meta.bare || !auth.isAuthed)
   <RouterView v-if="bare" />
   <AppShell v-else>
     <RouterView v-slot="{ Component, route: r }">
-      <component :is="Component" :key="r.path + (auth.activeRole ?? '')" />
+      <Transition name="page" mode="out-in">
+        <component :is="Component" :key="r.path + (auth.activeRole ?? '')" />
+      </Transition>
     </RouterView>
   </AppShell>
   <KToaster />

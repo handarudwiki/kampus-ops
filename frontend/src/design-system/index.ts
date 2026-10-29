@@ -24,6 +24,7 @@ import KStatus from './components/KStatus.vue'
 import KStepper from './components/KStepper.vue'
 import KTable from './components/KTable.vue'
 import KTextarea from './components/KTextarea.vue'
+import KTimeline from './components/KTimeline.vue'
 import KToolbar from './components/KToolbar.vue'
 import KBarChart from './charts/KBarChart.vue'
 import KGauge from './charts/KGauge.vue'
@@ -34,7 +35,7 @@ import KRing from './charts/KRing.vue'
 export const components = {
   KAlert, KAvatar, KBadge, KButton, KCard, KDot, KEmpty, KField, KIconButton, KInput, KKeyValue, KMenu,
   KModal, KPageHeader, KPagination, KProgress, KSearch, KSegmented, KSelect, KSkeleton, KStatCard,
-  KStatus, KStepper, KTable, KTextarea, KToolbar, KBarChart, KGauge, KLegend, KLineChart, KRing,
+  KStatus, KStepper, KTable, KTextarea, KTimeline, KToolbar, KBarChart, KGauge, KLegend, KLineChart, KRing,
 }
 
 /** Registers every K* component globally so views never hand-roll a button or badge. */
@@ -52,7 +53,7 @@ declare module 'vue' {
     KModal: typeof KModal; KPageHeader: typeof KPageHeader; KPagination: typeof KPagination
     KProgress: typeof KProgress; KSearch: typeof KSearch; KSegmented: typeof KSegmented; KSelect: typeof KSelect
     KSkeleton: typeof KSkeleton; KStatCard: typeof KStatCard; KStatus: typeof KStatus; KStepper: typeof KStepper
-    KTable: typeof KTable; KTextarea: typeof KTextarea; KToolbar: typeof KToolbar; KBarChart: typeof KBarChart
+    KTable: typeof KTable; KTextarea: typeof KTextarea; KTimeline: typeof KTimeline; KToolbar: typeof KToolbar; KBarChart: typeof KBarChart
     KGauge: typeof KGauge; KLegend: typeof KLegend; KLineChart: typeof KLineChart; KRing: typeof KRing
   }
 }
