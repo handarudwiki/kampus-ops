@@ -10,6 +10,7 @@ require (
 	github.com/prometheus/client_golang v1.25.0
 	github.com/redis/go-redis/v9 v9.23.0
 	github.com/shopspring/decimal v1.6.0
+	golang.org/x/crypto v0.58.0
 )
 
 require (
