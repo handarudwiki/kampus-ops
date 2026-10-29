@@ -21,11 +21,9 @@ declare module 'vue-router' {
   }
 }
 
-const v = (name: string) => () => import(`../views/${name}.vue`)
-
 const routes: RouteRecordRaw[] = [
-  { path: '/login', component: v('auth/LoginView'), meta: { public: true, bare: true, title: 'Masuk' } },
-  { path: '/', component: v('DashboardView'), meta: { title: 'Beranda' } },
+  { path: '/login', component: () => import('@/views/auth/LoginView.vue'), meta: { public: true, bare: true, title: 'Masuk' } },
+  { path: '/', component: () => import('@/views/DashboardView.vue'), meta: { title: 'Beranda' } },
   ...mahasiswa,
   ...perwalian,
   ...perkuliahan,
@@ -35,8 +33,8 @@ const routes: RouteRecordRaw[] = [
   ...pmb,
   ...pelaporan,
   ...admin,
-  { path: '/design-system', component: v('DesignSystemView'), meta: { title: 'Design system', public: true } },
-  { path: '/:pathMatch(.*)*', component: v('NotFoundView'), meta: { title: 'Tidak ditemukan', public: true } },
+  { path: '/design-system', component: () => import('@/views/DesignSystemView.vue'), meta: { title: 'Design system', public: true } },
+  { path: '/:pathMatch(.*)*', component: () => import('@/views/NotFoundView.vue'), meta: { title: 'Tidak ditemukan', public: true } },
 ]
 
 export const router = createRouter({
