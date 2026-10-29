@@ -222,6 +222,7 @@ CRUD = `GET list`, `GET /:id`, `POST`, `PUT /:id`, `DELETE /:id`
 ### PMB (FR-08..10, EC-04)
 - `GET /pmb/gelombang`, `POST /pmb/gelombang`
 - `GET /pmb/pendaftar?status=&gelombang_id=&q=` → `Pendaftar[]`
+- `GET /pmb/public-options?tenant_code=` (no auth) → `{ gelombang: Gelombang[] /* currently open */, prodi: Prodi[] }`
 - `POST /pmb/register` (no auth) `{ tenant_code, nama, email, nik, gelombang_id, prodi_pilihan_id, password }` → `Pendaftar`
 - `GET /pmb/me` (calon_mahasiswa) → `Pendaftar`
 - `POST /pmb/pendaftar/:id/transition` `{ to: PmbStatus }` → `Pendaftar` (`PMB_INVALID_TRANSITION`)
